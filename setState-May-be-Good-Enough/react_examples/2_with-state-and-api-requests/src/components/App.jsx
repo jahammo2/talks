@@ -13,40 +13,84 @@ const propTypes = {
   projects: PropTypes.array
 };
 
+function reducer(state = {}, action) {
+  switch (action.type) {
+    case 'CHANGE_NAME':
+      return {
+        ...state,
+        name: action.payload.name
+      };
+    case 'GET_ALL_PROJECTS':
+      return {
+        ...state,
+        projects: action.payload.projects,
+        featuredProject: action.payload.featuredProject
+      };
+    case 'UPDATE_FEATURED_PROJECT':
+      return {
+        ...state,
+        featuredProject: action.payload.featuredProject
+      };
+    default:
+      return state;
+  }
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
+    const initialState = {
       featuredProject: { attributes: {} },
       name: this.props.name,
       projects: []
     };
+
+    this.state = reducer(initialState, {});
   }
 
   componentWillMount() {
     return projectsService.getAll()
       .then((projects) => {
-        return this.setState({
-          featuredProject: projects[0],
-          projects
-        });
+        const action = {
+          type: 'GET_ALL_PROJECTS',
+          payload: {
+            featuredProject: projects[0],
+            projects
+          }
+        };
+
+        return this.dispatch(action);
       });
   }
 
-  onSubmit(name) {
-    return this.setState({ name });
+  dispatch(action) {
+    return this.setState((previousState) => reducer(previousState, action));
+  }
+
+  changeName(name) {
+    const action = {
+      type: 'CHANGE_NAME',
+      payload: { name }
+    };
+
+    return this.dispatch(action);
   }
 
   updateFeaturedProject(featuredProject) {
-    return this.setState({ featuredProject });
+    const action = {
+      type: 'UPDATE_FEATURED_PROJECT',
+      payload: { featuredProject }
+    };
+
+    return this.dispatch(action);
   }
 
   render() {
     return (
       <div>
         <Greeting name={this.state.name} />
-        <NameTaker name={this.state.name} onSubmit={this.onSubmit.bind(this)} />
+        <NameTaker name={this.state.name} onSubmit={this.changeName.bind(this)} />
         <div className="c-projects-container">
           <Projects
             featuredProject={this.state.featuredProject}
