@@ -1,0 +1,28 @@
+/* ==========================================================================
+ * Styles
+ * ========================================================================== */
+
+body,
+input,
+button {
+  font-size: 32px;
+}
+
+.c-projects-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 32px;
+}
+
+.c-projects {
+  margin-right: 10%;
+  width: 400px;
+}
+
+.c-projects__item {
+  cursor: pointer;
+}
+
+.c-projects__item--active {
+  font-weight: bold;
+}
